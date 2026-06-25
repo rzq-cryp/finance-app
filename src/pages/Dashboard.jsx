@@ -54,6 +54,11 @@ export default function Dashboard() {
     });
   };
 
+  const formatRupiah = (angka) => {
+    if (!angka && angka !== 0) return "0";
+    return Number(angka).toLocaleString("id-ID");
+  };
+
   return (
     <div className="min-h-screen bg-yellow-50 p-3 md:p-4 font-mono space-y-4 max-w-3xl mx-auto">
 
@@ -102,6 +107,9 @@ export default function Dashboard() {
                 updateWalletBalance(w.name, e.target.value)
               }
             />
+          <div className="text-[10px] font-black mt-1">
+            Rp {formatRupiah(w.balance)}
+          </div>  
           </div>
         ))}
 
@@ -206,15 +214,15 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
 
         <div className="bg-white border-4 border-black p-3 font-black text-sm">
-          BALANCE: Rp {balance}
+          BALANCE: Rp {formatRupiah(balance)}
         </div>
 
         <div className="bg-green-200 border-4 border-black p-3 font-black text-sm">
-          INCOME: Rp {income}
+          INCOME: Rp {formatRupiah(income)}
         </div>
 
         <div className="bg-red-200 border-4 border-black p-3 font-black text-sm">
-          EXPENSE: Rp {expense}
+          EXPENSE: Rp {formatRupiah(expense)}
         </div>
 
       </div>
@@ -321,7 +329,7 @@ export default function Dashboard() {
 
             <div className="flex justify-between items-center">
               <div className="font-black text-sm">
-                Rp {t.amount}
+                Rp {formatRupiah(t.amount)}
               </div>
 
               <button
