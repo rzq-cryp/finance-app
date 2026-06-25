@@ -10,6 +10,11 @@ export default function Stats() {
     transfers,
   } = useFinance();
 
+  const formatRupiah = (angka) => {
+    if (!angka && angka !== 0) return "0";
+    return Number(angka).toLocaleString("id-ID");
+  };
+
   return (
     <div className="min-h-screen bg-yellow-50 p-4 font-mono space-y-4">
 
@@ -27,15 +32,15 @@ export default function Stats() {
       <div className="grid gap-3">
 
         <div className="bg-white border-4 border-black p-3 font-black">
-          💰 TOTAL BALANCE: Rp {balance}
+          💰 TOTAL BALANCE: Rp {formatRupiah(balance)}
         </div>
 
         <div className="bg-green-200 border-4 border-black p-3 font-black">
-          📈 TOTAL INCOME: Rp {income}
+          📈 TOTAL INCOME: Rp {formatRupiah(income)}
         </div>
 
         <div className="bg-red-200 border-4 border-black p-3 font-black">
-          📉 TOTAL EXPENSE: Rp {expense}
+          📉 TOTAL EXPENSE: Rp {formatRupiah(expense)}
         </div>
 
         <div className="bg-blue-200 border-4 border-black p-3 font-black">
@@ -56,7 +61,7 @@ export default function Stats() {
             </span>
 
             <span className="font-black">
-              Rp {w.balance}
+              Rp {formatRupiah(w.balance)}
             </span>
           </div>
         ))}
