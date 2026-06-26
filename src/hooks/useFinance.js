@@ -95,8 +95,13 @@ export default function useFinance() {
     fetch("https://script.google.com/macros/s/AKfycbwG79oeknDZaEI8HgKy5DELOQsF6Lf15_AmzMJq2pFVnB_irMjEaf-Ix6XCsAKU6eH3Vg/exec)",{
       method: "POST",
       body: JSON.stringify(newTx),
-    });
-
+      headers: {
+        "Content-Type": "text/plain"
+      }
+    })
+    .then(res => res.text())
+    .then(data => console.log("SHEET RESPONSE:", data))
+    .catch(err => console.log("ERROR:", err));
 
     setWallets((prev) =>
       prev.map((w) => {
