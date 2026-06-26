@@ -172,70 +172,65 @@ export default function useFinance() {
 
   // 📊 EXPORT CSV
   const exportCSV = () => {
-    let csv =
-      "title,amount,type,wallet,category\n";
+  let csv = "title,amount,type,wallet,category\n";
 
-    transactions.forEach((t) => {
-      csv += `${t.title},${t.amount},${t.type},${t.wallet},${t.category}\n`;
-    });
+  transactions.forEach((t) => {
+    csv += `"${t.title}",${t.amount},${t.type},${t.wallet},${t.category}\n`;
+  });
 
-    const blob = new Blob([csv], {
-      type: "text/csv",
-    });
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
 
-    const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "finance-data.csv";
+  a.click();
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "finance-data.csv";
-    a.click();
-
-    URL.revokeObjectURL(url);
-  };
+  URL.revokeObjectURL(url);
+};
 
   // 📄 EXPORT PDF
   const exportPDF = () => {
-    const doc = new jsPDF();
+  const doc = new jsPDF();
 
-    let y = 10;
+  let y = 10;
 
-    doc.setFontSize(16);
-    doc.text("FINANCE REPORT", 10, y);
+  doc.setFontSize(16);
+  doc.text("FINANCE REPORT", 10, y);
 
-    y += 10;
+  doc.setFontSize(10);
 
-    doc.setFontSize(10);
+  y += 10;
+  doc.text(`INCOME: Rp ${income}`, 10, y);
 
-    doc.text(`INCOME: Rp ${income}`, 10, (y += 10));
-    doc.text(`EXPENSE: Rp ${expense}`, 10, (y += 8));
-    doc.text(`BALANCE: Rp ${balance}`, 10, (y += 8));
+  y += 8;
+  doc.text(`EXPENSE: Rp ${expense}`, 10, y);
 
-    y += 10;
+  y += 8;
+  doc.text(`BALANCE: Rp ${balance}`, 10, y);
 
-    doc.text("WALLETS:", 10, (y += 10));
+  y += 10;
+  doc.text("WALLETS:", 10, y);
 
-    wallets.forEach((w) => {
-      doc.text(
-        `${w.name.toUpperCase()} : Rp ${w.balance}`,
-        10,
-        (y += 8)
-      );
-    });
+  wallets.forEach((w) => {
+    y += 8;
+    doc.text(`${w.name.toUpperCase()} : Rp ${w.balance}`, 10, y);
+  });
 
-    y += 10;
+  y += 10;
+  doc.text("TRANSACTIONS:", 10, y);
 
-    doc.text("TRANSACTIONS:", 10, (y += 10));
+  transactions.forEach((t) => {
+    y += 8;
+    doc.text(
+      `${t.title} | Rp ${t.amount} | ${t.type} | ${t.wallet}`,
+      10,
+      y
+    );
+  });
 
-    transactions.forEach((t) => {
-      doc.text(
-        `${t.title} | Rp ${t.amount} | ${t.type} | ${t.wallet}`,
-        10,
-        (y += 8)
-      );
-    });
-
-    doc.save("finance-report.pdf");
-  };
+  doc.save("finance-report.pdf");
+};
 
   return {
     wallets,

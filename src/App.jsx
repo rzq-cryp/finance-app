@@ -2,11 +2,13 @@ import { Routes, Route, Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import Dashboard from "./pages/Dashboard";
 import Stats from "./pages/Stats";
+import useFinance from "./hooks/useFinance";
 
 
 export default function App() {
   const location = useLocation();
   const [openExport, setOpenExport] = useState(false);
+  const { exportPDF, exportCSV } = useFinance ();
 
   const isActive = (path) => location.pathname === path;
 
@@ -60,11 +62,17 @@ export default function App() {
 
             <h2 className="font-black text-lg">EXPORT DATA</h2>
 
-            <button className="w-full border-2 border-black p-2 font-black bg-blue-300 shadow-[4px_4px_0px_0px_black]">
+            <button
+            onClick={exportPDF} 
+            className="w-full border-2 border-black p-2 font-black bg-blue-300 shadow-[4px_4px_0px_0px_black]"
+            >
               EXPORT PDF
             </button>
 
-            <button className="w-full border-2 border-black p-2 font-black bg-green-300 shadow-[4px_4px_0px_0px_black]">
+            <button
+             onClick={exportCSV}
+             className="w-full border-2 border-black p-2 font-black bg-green-300 shadow-[4px_4px_0px_0px_black]"
+             >
               EXPORT CSV
             </button>
 
