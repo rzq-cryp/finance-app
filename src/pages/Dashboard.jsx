@@ -43,6 +43,7 @@ export default function Dashboard() {
       ...form,
       type: tab,
       amount: Number(form.amount),
+      date: new Date().toISOString(),
     });
 
     setForm({
@@ -57,6 +58,14 @@ export default function Dashboard() {
   const formatRupiah = (angka) => {
     if (!angka && angka !== 0) return "0";
     return Number(angka).toLocaleString("id-ID");
+  };
+
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString("id-ID", {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+    });
   };
 
   return (
@@ -82,6 +91,27 @@ export default function Dashboard() {
         🔁 Transfer = pindah saldo antar wallet <br />
         📊 Balance = total semua wallet
       </div>
+
+      <button
+  onClick={() => {
+    const oldData =
+      JSON.parse(localStorage.setItem("transactions")) || [];
+
+    oldData.forEach((t) => {
+      fetch("https://script.google.com/macros/s/AKfycbwG79oeknDZaEI8HgKy5DELOQsF6Lf15_AmzMJq2pFVnB_irMjEaf-Ix6XCsAKU6eH3Vg/exec", {
+        method: "POST",
+        body: JSON.stringify(t),
+      });
+    });
+
+    localStorage.setItem("migrated", "true");
+
+    alert("Migration success 🚀");
+  }}
+  className="w-full bg-black text-white p-2 font-black text-xs mt-2"
+>
+  MIGRATE LOCAL DATA → GOOGLE SHEETS
+</button>
 
       {/* WALLET SECTION */}
       <div className="bg-white border-4 border-black p-3 space-y-2">
@@ -316,6 +346,9 @@ export default function Dashboard() {
             key={t.id}
             className="bg-white border-4 border-black p-3 flex flex-col md:flex-row md:justify-between gap-2"
           >
+            <div className="text-[10px] text-gray-600">
+              {formatDate(t.date)}
+              </div>
 
             <div>
               <div className="font-black text-sm">{t.title}</div>
