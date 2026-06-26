@@ -61,7 +61,13 @@ export default function Dashboard() {
   };
 
   const formatDate = (date) => {
-    return new Date(date).toLocaleDateString("id-ID", {
+    if (!date) return "-";
+
+    const d = new Date (date);
+
+    if (isNaN(d.getTime())) return "-";
+
+    return d.toLocaleDateString("id-ID", {
       year: "numeric",
       month: "short",
       day: "2-digit",
