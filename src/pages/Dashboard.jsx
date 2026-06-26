@@ -63,7 +63,7 @@ export default function Dashboard() {
   const formatDate = (date) => {
     if (!date) return "-";
 
-    const d = new Date (date);
+    const d = new Date(date);
 
     if (isNaN(d.getTime())) return "-";
 
@@ -101,12 +101,22 @@ export default function Dashboard() {
       <button
   onClick={() => {
     const oldData =
-      JSON.parse(localStorage.setItem("transactions")) || [];
+      JSON.parse(localStorage.getItem("transactions")) || [];
 
     oldData.forEach((t) => {
       fetch("https://script.google.com/macros/s/AKfycbwG79oeknDZaEI8HgKy5DELOQsF6Lf15_AmzMJq2pFVnB_irMjEaf-Ix6XCsAKU6eH3Vg/exec", {
         method: "POST",
-        body: JSON.stringify(t),
+        headers: {
+          "Content-Type": "text/plain",
+        },
+        body: JSON.stringify({
+          title: t.title,
+          category: t.category,
+          type: t.type,
+          wallet: t.wallet,
+          amount: t.amount,
+          date: t.date || new Date(). toISOString (),
+        }),
       });
     });
 
