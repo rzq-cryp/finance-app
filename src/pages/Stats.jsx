@@ -10,14 +10,27 @@ export default function Stats() {
     transfers,
   } = useFinance();
 
+  // Helper untuk format mata uang
   const formatRupiah = (angka) => {
     if (!angka && angka !== 0) return "0";
     return Number(angka).toLocaleString("id-ID");
   };
 
+  // Logika pengelompokan transaksi dipindah ke sini agar JSX lebih bersih
+  const transactionsByDate = transactions?.reduce((acc, t) => {
+    const date = t.date
+      ? new Date(t.date).toLocaleDateString("id-ID")
+      : "Tanpa Tanggal";
+
+    if (!acc[date]) acc[date] = [];
+    acc[date].push(t);
+
+    return acc;
+  }, {}) || {};
+
   return (
     <div className="min-h-screen bg-yellow-50 p-4 font-mono space-y-4">
-
+      
       {/* HEADER */}
       <div className="bg-white border-4 border-black p-4 shadow">
         <h1 className="text-2xl font-black">
@@ -30,7 +43,6 @@ export default function Stats() {
 
       {/* SUMMARY CARDS */}
       <div className="grid gap-3">
-
         <div className="bg-white border-4 border-black p-3 font-black">
           💰 TOTAL BALANCE: Rp {formatRupiah(balance)}
         </div>
@@ -46,62 +58,66 @@ export default function Stats() {
         <div className="bg-blue-200 border-4 border-black p-3 font-black">
           🔁 TOTAL TRANSFERS: {transfers?.length || 0}
         </div>
-
       </div>
 
       {/* WALLET BREAKDOWN */}
+      {wallets?.length > 0 && (
+        <div className="bg-white border-4 border-black p-3 space-y-2">
+          <div className="font-black">🏦 WALLET BREAKDOWN</div>
+
+          {wallets.map((w, i) => (
+            <div key={w.id || i} className="flex justify-between border-b py-1">
+              <span className="font-bold">
+                {w.name.toUpperCase()}
+              </span>
+              <span className="font-black">
+                Rp {formatRupiah(w.balance)}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* TRANSAKSI PER HARI */}
       <div className="bg-white border-4 border-black p-3 space-y-2">
+        <div className="font-black">📅 TRANSAKSI PER HARI</div>
 
-        <div className="font-black">🏦 WALLET BREAKDOWN</div>
+        {Object.entries(transactionsByDate).map(([date, items]) => (
+          <div key={date} className="border-b pb-2">
+            
+            {/* HEADER TANGGAL */}
+            <div className="bg-black text-white px-2 py-1 font-black text-sm">
+              {date}
+            </div>
 
-        {wallets.map((w, i) => (
-          <div key={i} className="flex justify-between border-b py-1">
-            <span className="font-bold">
-              {w.name.toUpperCase()}
-            </span>
+            {/* LIST TRANSAKSI */}
+            {items.map((t) => (
+              <div
+                key={t.id}
+                className="flex justify-between text-sm py-1"
+              >
+                <div>
+                  <div className="font-black">{t.title}</div>
+                  <div className="text-xs">{t.category}</div>
+                </div>
 
-            <span className="font-black">
-              Rp {formatRupiah(w.balance)}
-            </span>
+                <div className="font-black">
+                  {/* Reuse helper formatRupiah di sini */}
+                  Rp {formatRupiah(t.amount)} 
+                </div>
+              </div>
+            ))}
           </div>
         ))}
-
-      </div>
-
-      {/* TRANSACTION COUNT */}
-      <div className="bg-white border-4 border-black p-3 space-y-1">
-
-        <div className="font-black">📦 TRANSACTION INSIGHT</div>
-
-        <div>📌 Total transaksi: {transactions.length}</div>
-
-        <div>
-          💸 Income transaksi:{" "}
-          {
-            transactions.filter((t) => t.type === "income")
-              .length
-          }
-        </div>
-
-        <div>
-          💳 Expense transaksi:{" "}
-          {
-            transactions.filter((t) => t.type === "expense")
-              .length
-          }
-        </div>
-
       </div>
 
       {/* SIMPLE INSIGHT BOX */}
       <div className="bg-black text-white p-4 border-4 border-black font-black">
-
         📌 INSIGHT:
         <br />
         {income > expense
           ? "Keuangan kamu POSITIF (aman 👍)"
           : "Keuangan kamu DEFISIT (hati-hati ⚠️)"}
-
       </div>
 
     </div>

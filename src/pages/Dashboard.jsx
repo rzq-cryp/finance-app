@@ -134,81 +134,7 @@ export default function Dashboard() {
         MIGRATE LOCAL DATA → GOOGLE SHEETS
       </button>
 
-      {/* WALLET SECTION */}
-      <div className="bg-white border-4 border-black p-3 space-y-2">
-        <div className="font-black text-sm md:text-base">
-          🏦 YOUR WALLETS
-        </div>
-
-        {wallets.map((w, i) => (
-          <div
-            key={i}
-            className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 border-b py-2"
-          >
-            <span className="font-black text-sm">
-              {w.name.toUpperCase()}
-            </span>
-
-            <div className="relative w-full md:w-28">
-              <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs font-bold">
-                Rp
-              </span>
-
-              <input
-                type="number"
-                className="border-2 border-black pl-8 pr-2 py-1 w-full text-right font-black text-sm"
-                value={editBalance[w.name] ?? w.balance}
-                onFocus={(e) => e.target.select()}
-                onChange={(e) => {
-                  const val = e.target.value;
-
-                  setEditBalance((prev) => ({
-                    ...prev,
-                    [w.name]: val,
-                  }));
-
-                  updateWalletBalance(w.name, val);
-                }}
-              />
-            </div>
-
-            <div className="text-[10px] font-black mt-1">
-              Rp {formatRupiah(w.balance)}
-            </div>
-          </div>
-        ))}
-
-        {/* ADD WALLET */}
-        <div className="flex flex-col md:flex-row gap-2 mt-2">
-          <input
-            className="border p-2 w-full font-black text-sm"
-            placeholder="wallet name"
-            value={walletName}
-            onChange={(e) => setWalletName(e.target.value)}
-          />
-
-          <input
-            className="border p-2 w-full md:w-28 font-black text-sm"
-            placeholder="saldo"
-            type="number"
-            value={walletBalance}
-            onChange={(e) => setWalletBalance(e.target.value)}
-          />
-
-          <button
-            onClick={() => {
-              if (!walletName) return;
-              addWallet(walletName, walletBalance);
-              setWalletName("");
-              setWalletBalance("");
-            }}
-            className="bg-black text-white px-3 py-2 font-black text-sm"
-          >
-            +
-          </button>
-        </div>
-      </div>
-
+      
       {/* TRANSFER SECTION */}
       <div className="bg-white border-4 border-black p-3 space-y-2">
         <div className="font-black text-sm">🔁 TRANSFER WALLET</div>
@@ -269,21 +195,6 @@ export default function Dashboard() {
         >
           TRANSFER NOW
         </button>
-      </div>
-
-      {/* SUMMARY */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-        <div className="bg-white border-4 border-black p-3 font-black text-sm">
-          BALANCE: Rp {formatRupiah(balance)}
-        </div>
-
-        <div className="bg-green-200 border-4 border-black p-3 font-black text-sm">
-          INCOME: Rp {formatRupiah(income)}
-        </div>
-
-        <div className="bg-red-200 border-4 border-black p-3 font-black text-sm">
-          EXPENSE: Rp {formatRupiah(expense)}
-        </div>
       </div>
 
       {/* TAB */}
@@ -370,10 +281,6 @@ export default function Dashboard() {
             key={t.id}
             className="bg-white border-4 border-black p-3 flex flex-col md:flex-row md:justify-between gap-2"
           >
-            <div className="text-[10px] text-gray-600">
-              {formatDate(t.date)}
-            </div>
-
             <div>
               <div className="font-black text-sm">{t.title}</div>
               <div className="text-[10px] md:text-xs">

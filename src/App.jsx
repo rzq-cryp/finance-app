@@ -3,6 +3,7 @@ import { useState } from "react";
 import Dashboard from "./pages/Dashboard";
 import Stats from "./pages/Stats";
 import useFinance from "./hooks/useFinance";
+import Wallet from "./pages/Wallet";
 
 
 export default function App() {
@@ -12,6 +13,10 @@ export default function App() {
 
   const isActive = (path) => location.pathname === path;
 
+  const navItem = (path) =>
+  "relative font-black px-3 transition-all duration-300 " +
+  (isActive(path) ? "text-black" : "text-gray-400");
+
   return (
     <div className="min-h-screen bg-yellow-50 flex flex-col font-mono">
 
@@ -19,30 +24,32 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/stats" element={<Stats />} />
+          <Route path="/wallet" element={<Wallet />} />
         </Routes>
       </div>
 
       {/* NEUBRUTAL NAVBAR */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-4 border-black flex justify-around p-3 z-[999] shadow-[6px_6px_0px_0px_black]">
 
-        <Link
-          to="/"
-          className={
-            "font-black px-3 " +
-            (isActive("/") ? "text-black" : "text-gray-400")
-          }
-        >
+        <Link to="/" className={navItem("/")}>
           HOME
+          {isActive("/") && (
+            <span className="absolute left-0 -bottom-1 w-full h-1 bg-black transition-all duration-300"></span>
+          )}
         </Link>
 
-        <Link
-          to="/stats"
-          className={
-            "font-black px-3 " +
-            (isActive("/stats") ? "text-black" : "text-gray-400")
-          }
-        >
+        <Link to="/stats" className={navItem("/stats")}>
           STATS
+          {isActive("/stats") && (
+            <span className="absolute left-0 -bottom-1 w-full h-1 bg-black transition-all duration-300"></span>
+          )}
+        </Link>
+
+        <Link to="/wallet" className={navItem("/wallet")}>
+          WALLET
+          {isActive("/wallet") && (
+            <span className="absolute left-0 -bottom-1 w-full h-1 bg-black transition-all duration-300"></span>
+          )}
         </Link>
 
         <button
