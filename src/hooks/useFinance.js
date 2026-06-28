@@ -193,45 +193,74 @@ export default function useFinance() {
   const exportPDF = () => {
   const doc = new jsPDF();
 
-  let y = 10;
+  let y = 15;
 
-  doc.setFontSize(16);
-  doc.text("FINANCE REPORT", 10, y);
+  const line = () => {
+    doc.setDrawColor(0);
+    doc.line(10, y, 200, y);
+    y += 8;
+  };
 
-  doc.setFontSize(10);
+  const addText = (text, size = 11, bold = false) => {
+    doc.setFontSize(size);
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.text(text, 10, y);
+    y += 7;
+  };
 
-  y += 10;
-  doc.text(`INCOME: Rp ${income}`, 10, y);
+  // HEADER
+  addText("FINANCE REPORT", 16, true);
+  y += 2;
+  line();
 
-  y += 8;
-  doc.text(`EXPENSE: Rp ${expense}`, 10, y);
+  // SUMMARY
+  addText(`INCOME   : Rp ${income}`, 11, true);
+  addText(`EXPENSE  : Rp ${expense}`, 11, true);
+  addText(`BALANCE  : Rp ${balance}`, 11, true);
 
-  y += 8;
-  doc.text(`BALANCE: Rp ${balance}`, 10, y);
+  y += 3;
+  line();
 
-  y += 10;
-  doc.text("WALLETS:", 10, y);
+  // WALLETS
+  addText("WALLETS", 13, true);
 
   wallets.forEach((w) => {
-    y += 8;
-    doc.text(`${w.name.toUpperCase()} : Rp ${w.balance}`, 10, y);
+    addText(`${w.name.toUpperCase()} : Rp ${w.balance}`, 10, false);
   });
 
-  y += 10;
-  doc.text("TRANSACTIONS:", 10, y);
+  y += 3;
+  line();
 
-  transactions.forEach((t) => {
-    y += 8;
-    doc.text(
-      `${t.title} | Rp ${t.amount} | ${t.type} | ${t.wallet}`,
-      10,
-      y
-    );
+  // TRANSACTIONS GROUPED BY DATE
+  addText("TRANSACTIONS", 13, true);
+
+  const grouped = transactions.reduce((acc, t) => {
+    const date = t.date
+      ? new Date(t.date).toLocaleDateString("id-ID")
+      : "No Date";
+
+    if (!acc[date]) acc[date] = [];
+    acc[date].push(t);
+
+    return acc;
+  }, {});
+
+  Object.entries(grouped).forEach(([date, items]) => {
+    addText(date, 12, true);
+
+    items.forEach((t) => {
+      addText(
+        `• ${t.title} | Rp ${t.amount} | ${t.type}`,
+        10,
+        false
+      );
+    });
+
+    y += 2;
   });
 
   doc.save("finance-report.pdf");
 };
-
   return {
     wallets,
     transactions,
