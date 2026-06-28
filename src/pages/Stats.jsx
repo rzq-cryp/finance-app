@@ -1,3 +1,4 @@
+import { useState } from "react";
 import useFinance from "../hooks/useFinance";
 
 export default function Stats() {
@@ -10,13 +11,16 @@ export default function Stats() {
     transfers,
   } = useFinance();
 
+  // ✅ FIX 1: Pindahkan state ke tingkat paling atas komponen
+  const [open, setOpen] = useState({});
+
   // Helper untuk format mata uang
   const formatRupiah = (angka) => {
     if (!angka && angka !== 0) return "0";
     return Number(angka).toLocaleString("id-ID");
   };
 
-  // Logika pengelompokan transaksi dipindah ke sini agar JSX lebih bersih
+  // Logika pengelompokan transaksi
   const transactionsByDate = transactions?.reduce((acc, t) => {
     const date = t.date
       ? new Date(t.date).toLocaleDateString("id-ID")
@@ -83,30 +87,43 @@ export default function Stats() {
         <div className="font-black">📅 TRANSAKSI PER HARI</div>
 
         {Object.entries(transactionsByDate).map(([date, items]) => (
-          <div key={date} className="border-b pb-2">
+          // ✅ FIX 2: Menghapus duplikasi render transaksi di bagian bawah dan merapikan tag
+          <div key={date} className="border-2 border-black mb-2">
             
-            {/* HEADER TANGGAL */}
-            <div className="bg-black text-white px-2 py-1 font-black text-sm">
-              {date}
+            {/* HEADER (CLICKABLE) */}
+            <div
+              onClick={() =>
+                setOpen((prev) => ({
+                  ...prev,
+                  [date]: !prev[date],
+                }))
+              }
+              className="bg-black text-white px-3 py-2 font-black flex justify-between cursor-pointer"
+            >
+              <span>📅 {date}</span>
+              <span>{open[date] ? "▲" : "▼"}</span>
             </div>
 
-            {/* LIST TRANSAKSI */}
-            {items.map((t) => (
-              <div
-                key={t.id}
-                className="flex justify-between text-sm py-1"
-              >
-                <div>
-                  <div className="font-black">{t.title}</div>
-                  <div className="text-xs">{t.category}</div>
-                </div>
+            {/* CONTENT (DROP DOWN) */}
+            {open[date] && (
+              <div className="p-2 space-y-2 bg-white">
+                {items.map((t) => (
+                  <div
+                    key={t.id}
+                    className="flex justify-between text-sm py-1 border-b"
+                  >
+                    <div>
+                      <div className="font-black">{t.title}</div>
+                      <div className="text-xs">{t.category}</div>
+                    </div>
 
-                <div className="font-black">
-                  {/* Reuse helper formatRupiah di sini */}
-                  Rp {formatRupiah(t.amount)} 
-                </div>
+                    <div className="font-black">
+                      Rp {formatRupiah(t.amount)}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
         ))}
       </div>
